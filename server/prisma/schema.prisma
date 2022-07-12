@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Location {
+  id            String     @id @default(uuid())
+  name          String
+  description   String
+  northId       String?
+  north         Location?  @relation("SouthLocation", fields: [northId], references: [id])
+  eastId        String?
+  east          Location?  @relation("WestLocation", fields: [eastId], references: [id])
+  southId       String?
+  south         Location?  @relation("NorthLocation", fields: [northId], references: [id])
+  westId        String?
+  west          Location?  @relation("EastLocation", fields: [eastId], references: [id])
+  southLocation Location[] @relation("SouthLocation")
+  westLocation  Location[] @relation("WestLocation")
+  northLocation Location[] @relation("NorthLocation")
+  eastLocation  Location[] @relation("EastLocation")
+
+  @@unique([id, northId])
+  @@unique([id, eastId])
+  @@unique([id, southId])
+  @@unique([id, westId])
+}
+
+// model Item {
+//   id      String @id @default(uuid())
+//   uses    Int
+//   maxUses Int
+// }
+
+// model TreasurePack {
+//   id     String @id @default(uuid())
+//   rarity Int
+// }
